@@ -89,7 +89,7 @@ function loadCategories() {
 function drawProducts(products) {
 	var template = Handlebars.compile(document.getElementById("products-template").innerHTML);
 
-	const data = await getBooks(`${searchBooks.value}&maxResults=6`);
+	const data = getBooks(`${searchBooks.value}&maxResults=6`);
 	console.log(data);
 
 	document.getElementById('products-container').innerHTML = template({
