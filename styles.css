@@ -31,3 +31,7 @@ body {
 .card:hover {
 	transform: scale(1.15);
 }
+
+.media:hover {
+	background-color: #FBFBFB;
+}
