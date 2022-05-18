@@ -2,6 +2,7 @@ var products = null;
 var categories = null;
 var title = null;
 
+let bookContainer = document.querySelector(".search");
 let searchBooks = document.getElementById("titlebook");
 
 
@@ -21,10 +22,39 @@ const extractThumbnail = ({ imageLinks }) => {
 	return imageLinks.thumbnail.replace("http://", "https://");
 };
 
-const data = await getBooks(`${searchBooks.value}&maxResults=6`);
-
-console.log(data);
-
+const drawListBook = async () => {
+	if (searchBooks.value != "") {
+	  bookContainer.style.display = "flex";
+	  bookContainer.innerHTML = `<div class='prompt'><div class="loader"></div></div>`;
+	  const data = await getBooks(`${searchBooks.value}&maxResults=6`);
+	  if (data.error) {
+		bookContainer.innerHTML = `<div class='prompt'>ツ Limit exceeded! Try after some time</div>`;
+	  } else if (data.totalItems == 0) {
+		bookContainer.innerHTML = `<div class='prompt'>ツ No results, try a different term!</div>`;
+	  } else if (data.totalItems == undefined) {
+		bookContainer.innerHTML = `<div class='prompt'>ツ Network problem!</div>`;
+	  } else {
+		bookContainer.innerHTML = data.items
+		  .map(
+			({ volumeInfo }) =>
+			  `<div class='book' style='background: linear-gradient(` +
+			  getRandomColor() +
+			  `, rgba(0, 0, 0, 0));'><a href='${volumeInfo.previewLink}' target='_blank'><img class='thumbnail' src='` +
+			  extractThumbnail(volumeInfo) +
+			  `' alt='cover'></a><div class='book-info'><h3 class='book-title'><a href='${volumeInfo.previewLink}' target='_blank'>${volumeInfo.title}</a></h3><div class='book-authors' onclick='updateFilter(this,"author");'>${volumeInfo.authors}</div><div class='info' onclick='updateFilter(this,"subject");' style='background-color: ` +
+			  getRandomColor() +
+			  `;'>` +
+			  (volumeInfo.categories === undefined
+				? "Others"
+				: volumeInfo.categories) +
+			  `</div></div></div>`
+		  )
+		  .join("");
+	  }
+	} else {
+	  bookContainer.style.display = "none";
+	}
+  };
 
 // Called once the page has loaded
 document.addEventListener('DOMContentLoaded', function(event) {
