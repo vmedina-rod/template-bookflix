@@ -2,6 +2,30 @@ var products = null;
 var categories = null;
 var title = null;
 
+let searchBooks = document.getElementById("titlebook");
+
+
+const getBooks = async (book) => {
+	const response = await fetch(
+	  `https://www.googleapis.com/books/v1/volumes?q=${book}`
+	);
+	const data = await response.json();
+	return data;
+};
+
+const extractThumbnail = ({ imageLinks }) => {
+	const DEFAULT_THUMBNAIL = "icons/logo.svg";
+	if (!imageLinks || !imageLinks.thumbnail) {
+	  return DEFAULT_THUMBNAIL;
+	}
+	return imageLinks.thumbnail.replace("http://", "https://");
+};
+
+const data = await getBooks(`${searchBooks.value}&maxResults=6`);
+
+console.log(data);
+
+
 // Called once the page has loaded
 document.addEventListener('DOMContentLoaded', function(event) {
 	loadProducts();
